@@ -1,0 +1,16 @@
+{
+  "name": "JLPT N5 Mastery Hub",
+  "short_name": "JLPT N5",
+  "description": "Comprehensive JLPT N5 Study Tracker and Mastery Hub",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#0a0a0c",
+  "theme_color": "#ff4757",
+  "icons": [
+    {
+      "src": "https://cdn-icons-png.flaticon.com/512/330/330545.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

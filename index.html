@@ -1,0 +1,743 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JLPT N5 — 30-Day Study Tracker</title>
+    <meta name="description"
+        content="A comprehensive 30-day study tracker for JLPT N5 preparation, covering vocabulary, kanji, grammar, and listening.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Noto+Sans+JP:wght@300;400;500;700;900&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <!-- PRELOADER -->
+    <div id="preloader">
+        <div class="preloader-content">
+            <div class="preloader-kanji">日本語</div>
+            <div class="preloader-bar">
+                <div class="preloader-fill"></div>
+            </div>
+            <div class="preloader-text">Loading your journey...</div>
+        </div>
+    </div>
+
+    <!-- SIDEBAR -->
+    <nav id="sidebar">
+        <div class="sidebar-header">
+            <div class="logo-icon">漢</div>
+            <h1 class="logo-text">JLPT <span>N5</span></h1>
+            <p class="logo-sub">Mastery Hub</p>
+        </div>
+        <div class="theme-toggle-row">
+            <button id="themeToggle" class="theme-btn">🌙 Dark Mode</button>
+            <button id="furiganaToggle" class="theme-btn">あ Furigana</button>
+        </div>
+        <div class="user-profile-row" style="padding: 0 20px 15px 20px;">
+            <label style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 5px;">👤 User Profile</label>
+            <select id="userSelect" style="width: 100%; padding: 8px; border-radius: 6px; background: var(--bg-secondary); border: 1px solid var(--border); color: var(--text-primary);">
+                <option value="default">Default User</option>
+                <option value="add_new">+ Add New User...</option>
+            </select>
+        </div>
+        <ul class="nav-links">
+            <li><a href="#" data-view="dashboard" class="active"><span class="nav-icon">🏠</span> Dashboard</a></li>
+            <li><a href="#" data-view="srs"><span class="nav-icon">🧠</span> Review (SRS) <span id="srsBadge"
+                        class="nav-badge hidden">0</span></a></li>
+
+            <li><a href="#" data-view="daily"><span class="nav-icon">📖</span> Daily Lessons</a></li>
+            <div class="nav-section-title">Practice</div>
+            <li><a href="#" data-view="conjugation"><span>🔄</span> Conjugation</a></li>
+            <li><a href="#" data-view="quiz"><span>🧠</span> Quick Quiz</a></li>
+            <li><a href="#" data-view="timer"><span>⏱️</span> Study Timer</a></li>
+            <li><a href="#" data-view="exam"><span>📝</span> Mock Exam</a></li>
+
+            <div class="nav-section-title">Reference</div>
+            <li><a href="#" data-view="kanji"><span>漢</span> Kanji Bank</a></li>
+            <li><a href="#" data-view="vocab"><span>A</span> Vocabulary</a></li>
+            <li><a href="#" data-view="grammar"><span>G</span> Grammar</a></li>
+            <li><a href="#" data-view="particles"><span>P</span> Particles</a></li>
+            <li><a href="#" data-view="resources"><span>🔗</span> Resources</a></li>
+        </ul>
+        <div class="sidebar-footer">
+            <div class="storage-btns">
+                <button id="exportBtn" class="storage-btn export-btn">💾 Export Progress</button>
+                <button id="importBtn" class="storage-btn import-btn">📂 Import Progress</button>
+                <input type="file" id="importFile" accept=".json" style="display:none">
+            </div>
+            <button id="resetBtn" class="reset-btn">🔄 Reset All Progress</button>
+        </div>
+    </nav>
+
+    <!-- MOBILE NAV TOGGLE -->
+    <button id="mobileToggle" class="mobile-toggle">☰</button>
+
+    <!-- MAIN CONTENT -->
+    <main id="mainContent">
+
+
+
+        <!-- ===== DASHBOARD VIEW ===== -->
+        <section id="view-dashboard" class="view active">
+            <header class="view-header">
+                <div>
+                    <h2>Dashboard</h2>
+                    <p class="subtitle" id="dateDisplay"></p>
+                </div>
+                <div class="header-badges">
+                    <div class="badge phase-badge" id="phaseBadge">Phase I</div>
+                    <div class="badge day-badge">Day <span id="currentDayBadge">1</span>/30</div>
+                </div>
+            </header>
+
+            <!-- Stats Grid -->
+            <div class="stats-grid">
+                <!-- Consistency Stats (Responsive) -->
+                <div class="stat-card" style="grid-column: span 1; justify-content: space-around;">
+                    <div class="consistency-ring-container">
+                        <svg class="ring-svg" viewBox="0 0 100 100">
+                            <circle class="ring-bg" cx="50" cy="50" r="45"></circle>
+                            <circle id="consistencyRing" class="ring-fill" cx="50" cy="50" r="45"></circle>
+                        </svg>
+                        <div id="ringText" class="ring-text">0%</div>
+                    </div>
+                    <div style="flex:1; margin-left:20px">
+                        <h4>Activity</h4>
+                        <div id="activitySparkline" class="sparkline"></div>
+                        <div style="font-size:0.7rem; color:var(--text-muted); margin-top:5px">Last 7 days</div>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon" style="background: rgba(46, 213, 115, 0.15); color: var(--green);">🔥
+                    </div>
+                    <div>
+                        <div id="dashStreak" class="stat-value">0 days</div>
+                        <div class="stat-label">Daily Streak</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon" style="background: rgba(255, 71, 87, 0.15); color: var(--red);">🎯</div>
+                    <div>
+                        <div id="dashGoal" class="stat-value">0/15</div>
+                        <div class="stat-label">Daily Goal</div>
+                    </div>
+                </div>
+            </div>
+            <div class="stat-card accent-purple">
+                <div class="stat-icon">文</div>
+                <div class="stat-info">
+                    <span class="stat-value" id="grammarMastered">0</span>
+                    <span class="stat-label">Grammar Points</span>
+                </div>
+            </div>
+            <div class="stat-card accent-orange">
+                <div class="stat-icon">⏱️</div>
+                <div class="stat-info">
+                    <span class="stat-value" id="totalStudyTime">0h</span>
+                    <span class="stat-label">Study Time</span>
+                </div>
+            </div>
+            <div class="stat-card accent-cyan">
+                <div class="stat-icon">✅</div>
+                <div class="stat-info">
+                    <span class="stat-value" id="tasksCompleted">0</span>
+                    <span class="stat-label">Tasks Done</span>
+                </div>
+            </div>
+            </div>
+
+            <!-- Progress Bars -->
+            <div class="progress-section">
+                <h3>Overall Progress</h3>
+                <div class="progress-bars">
+                    <div class="progress-item">
+                        <div class="progress-label">
+                            <span>Days Completed</span>
+                            <span id="daysPercent">0%</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill red" id="daysFill" style="width:0%"></div>
+                        </div>
+                    </div>
+                    <div class="progress-item">
+                        <div class="progress-label">
+                            <span>Kanji (Target: 120)</span>
+                            <span id="kanjiPercent">0%</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill blue" id="kanjiFill" style="width:0%"></div>
+                        </div>
+                    </div>
+                    <div class="progress-item">
+                        <div class="progress-label">
+                            <span>Vocabulary (Target: 800)</span>
+                            <span id="vocabPercent">0%</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill green" id="vocabFill" style="width:0%"></div>
+                        </div>
+                    </div>
+                    <div class="progress-item">
+                        <div class="progress-label">
+                            <span>Grammar (Target: 80)</span>
+                            <span id="grammarPercent">0%</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill purple" id="grammarFill" style="width:0%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Today's Overview -->
+            <div class="today-section">
+                <h3>📌 Today's Focus</h3>
+                <div id="todayOverview" class="today-card"></div>
+            </div>
+
+            <!-- Exam Score Estimator -->
+            <div class="exam-section">
+                <h3>🎯 Exam Score Estimator</h3>
+                <div class="exam-grid">
+                    <div class="exam-card">
+                        <div class="exam-label">Vocabulary/Grammar/Reading</div>
+                        <div class="exam-score" id="estVGR">0 <span>/ 60</span></div>
+                        <div class="exam-threshold">Min: 38</div>
+                    </div>
+                    <div class="exam-card">
+                        <div class="exam-label">Listening</div>
+                        <div class="exam-score" id="estListening">0 <span>/ 60</span></div>
+                        <div class="exam-threshold">Min: 19</div>
+                    </div>
+                    <div class="exam-card highlight">
+                        <div class="exam-label">Estimated Total</div>
+                        <div class="exam-score" id="estTotal">0 <span>/ 180</span></div>
+                        <div class="exam-threshold">Pass: 80</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Motivational Quote -->
+            <div class="quote-section">
+                <blockquote id="dailyQuote"></blockquote>
+            </div>
+        </section>
+
+
+
+        <!-- Review (SRS) View -->
+        <section id="view-srs" class="view">
+            <div class="view-header">
+                <h2>Review Decks</h2>
+                <div class="header-actions">
+                    <button class="btn-outline" id="createDeckBtn">+ New Deck</button>
+                    <span id="srsCounter" class="badge day-badge">0 cards due</span>
+                </div>
+            </div>
+
+            <!-- Decks List Dashboard -->
+            <div id="srsDecksDashboard" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px; margin-top: 20px;">
+                <!-- Deck cards will be injected here by JS -->
+            </div>
+
+            <!-- Single Deck Overview -->
+            <div id="srsDeckOverview" class="stat-card hidden" style="max-width: 500px; margin: 40px auto; text-align: center; display: flex; flex-direction: column;">
+                <div class="srs-icon">🧠</div>
+                <h3 id="srsDeckName">Deck Name</h3>
+                <p id="srsDeckDueMsg" style="margin-bottom: 20px; color: var(--text-secondary);">X Cards Due</p>
+                <div style="display: flex; gap: 10px; justify-content: center;">
+                    <button id="addCustomCardBtn" class="btn-outline">Add Card</button>
+                    <button id="beginSrs" class="btn-primary">Start Review</button>
+                </div>
+                <button class="btn-text" style="margin-top:20px;" onclick="renderDecksDashboard()">← Back to Decks</button>
+            </div>
+
+            <div id="srsSession" class="srs-container hidden">
+                <div id="srsCard" class="srs-card">
+                    <div class="srs-card-inner">
+                        <div class="srs-card-front">
+                            <div id="srsCardType" class="srs-type">Kanji</div>
+                            <div id="srsQuestion" class="srs-q">漢</div>
+                            <div id="srsReading" class="srs-r">HINT</div>
+                            <button id="srsFlipBtn" class="btn-outline">Show Answer</button>
+                        </div>
+                        <div class="srs-card-back">
+                            <div id="srsAnswer" class="srs-a">Meaning</div>
+                            <div id="srsExample" class="srs-ex">Example Sentence</div>
+                            <div class="srs-controls">
+                                <button class="srs-btn again" data-grade="0">Again (1m)</button>
+                                <button class="srs-btn hard" data-grade="1">Hard (10m)</button>
+                                <button class="srs-btn good" data-grade="2">Good (1d)</button>
+                                <button class="srs-btn easy" data-grade="3">Easy (4d)</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===== DAILY LESSONS VIEW ===== -->
+        <section id="view-daily" class="view">
+            <header class="view-header">
+                <div>
+                    <h2 id="dailyTitle">Day 1</h2>
+                    <p class="subtitle" id="dailySubtitle"></p>
+                </div>
+                <div class="day-nav">
+                    <button id="prevDay" class="nav-btn">← Prev</button>
+                    <select id="daySelect" class="day-select"></select>
+                    <button id="nextDay" class="nav-btn">Next →</button>
+                </div>
+            </header>
+            <div id="dailyContent" class="daily-content"></div>
+        </section>
+
+        <!-- ===== KANJI BANK VIEW ===== -->
+        <section id="view-kanji" class="view">
+            <header class="view-header">
+                <h2>漢字 Kanji Bank</h2>
+                <div class="filter-controls">
+                    <select id="kanjiWeekFilter" class="filter-select">
+                        <option value="all">All Weeks</option>
+                        <option value="1">Week 1</option>
+                        <option value="2">Week 2</option>
+                        <option value="3">Week 3</option>
+                        <option value="4">Week 4</option>
+                    </select>
+                    <select id="kanjiStatusFilter" class="filter-select">
+                        <option value="all">All Status</option>
+                        <option value="mastered">Mastered</option>
+                        <option value="learning">Not Mastered</option>
+                    </select>
+                </div>
+            </header>
+            <div id="kanjiGrid" class="kanji-grid"></div>
+        </section>
+
+        <!-- ===== VOCABULARY VIEW ===== -->
+        <section id="view-vocab" class="view">
+            <header class="view-header">
+                <h2>語彙 Vocabulary</h2>
+                <div class="filter-controls">
+                    <input type="text" id="vocabSearch" placeholder="Search vocab..." class="search-input">
+                    <select id="vocabCategoryFilter" class="filter-select">
+                        <option value="all">All Categories</option>
+                    </select>
+                </div>
+            </header>
+            <div id="vocabList" class="vocab-list"></div>
+        </section>
+
+        <!-- ===== GRAMMAR VIEW ===== -->
+        <section id="view-grammar" class="view">
+            <header class="view-header">
+                <h2>文法 Grammar Points</h2>
+                <div class="filter-controls">
+                    <select id="grammarWeekFilter" class="filter-select">
+                        <option value="all">All Weeks</option>
+                        <option value="1">Week 1</option>
+                        <option value="2">Week 2</option>
+                        <option value="3">Week 3</option>
+                        <option value="4">Week 4</option>
+                    </select>
+                </div>
+            </header>
+            <div id="grammarList" class="grammar-list"></div>
+        </section>
+
+        <!-- ===== PARTICLES VIEW ===== -->
+        <section id="view-particles" class="view">
+            <header class="view-header">
+                <h2>助詞 Particle Master Guide</h2>
+                <p class="subtitle">The linguistic glue of Japanese</p>
+            </header>
+            <div id="particlesList" class="particles-list"></div>
+        </section>
+
+        <!-- ===== QUIZ VIEW ===== -->
+        <section id="view-quiz" class="view">
+            <header class="view-header">
+                <h2>🧠 Quick Quiz</h2>
+                <p class="subtitle">Test your knowledge</p>
+            </header>
+            <div class="quiz-controls">
+                <select id="quizType" class="filter-select">
+                    <option value="kanji">Kanji Reading</option>
+                    <option value="vocab">Vocabulary</option>
+                    <option value="grammar">Grammar</option>
+                    <option value="particle">Particles</option>
+                    <option value="mixed">Mixed</option>
+                </select>
+                <button id="startQuiz" class="btn-primary">Start Quiz (10 Questions)</button>
+            </div>
+            <div id="quizArea" class="quiz-area"></div>
+            <div id="quizResult" class="quiz-result"></div>
+        </section>
+
+        <!-- ===== TIMER VIEW ===== -->
+        <section id="view-timer" class="view">
+            <header class="view-header">
+                <h2>⏱️ Study Timer</h2>
+                <p class="subtitle">Pomodoro-style focus sessions</p>
+            </header>
+            <div class="timer-container">
+                <div class="timer-display">
+                    <div class="timer-circle">
+                        <svg viewBox="0 0 200 200">
+                            <circle cx="100" cy="100" r="90" class="timer-bg" />
+                            <circle cx="100" cy="100" r="90" class="timer-progress" id="timerCircle" />
+                        </svg>
+                        <div class="timer-text" id="timerText">25:00</div>
+                    </div>
+                </div>
+                <div class="timer-controls">
+                    <div class="timer-presets">
+                        <button class="preset-btn active" data-time="25">25 min</button>
+                        <button class="preset-btn" data-time="15">15 min</button>
+                        <button class="preset-btn" data-time="45">45 min</button>
+                        <button class="preset-btn" data-time="5">5 min break</button>
+                    </div>
+                    <div class="timer-actions">
+                        <button id="timerStart" class="btn-primary">▶ Start</button>
+                        <button id="timerPause" class="btn-secondary" disabled>⏸ Pause</button>
+                        <button id="timerReset" class="btn-secondary">↺ Reset</button>
+                    </div>
+                </div>
+                <div class="timer-log">
+                    <h4>Today's Sessions</h4>
+                    <div id="sessionLog"></div>
+                    <div class="total-today">Total today: <strong id="totalToday">0 min</strong></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===== RESOURCES VIEW ===== -->
+        <section id="view-resources" class="view">
+            <header class="view-header">
+                <h2>🔗 Learning Resources</h2>
+                <p class="subtitle">Recommended tools and materials</p>
+            </header>
+            <div class="resources-grid">
+                <div class="resource-card">
+                    <div class="resource-icon">📱</div>
+                    <h4>Anki</h4>
+                    <p>SRS-based flashcards for kanji and vocabulary. Create your own decks or use community JLPT N5
+                        decks.</p>
+                    <a href="https://apps.ankiweb.net/" target="_blank" class="resource-link">ankiweb.net →</a>
+                </div>
+                <div class="resource-card">
+                    <div class="resource-icon">🎧</div>
+                    <h4>JapanesePod101</h4>
+                    <p>Audio/video lessons perfect for shadowing practice. Beginner pathway aligns well with N5.</p>
+                    <a href="https://www.japanesepod101.com/" target="_blank" class="resource-link">japanesepod101.com
+                        →</a>
+                </div>
+                <div class="resource-card">
+                    <div class="resource-icon">📰</div>
+                    <h4>NHK News Web Easy</h4>
+                    <p>Current news written at N5-N4 level. Great for reading practice with furigana support.</p>
+                    <a href="https://www3.nhk.or.jp/news/easy/" target="_blank"
+                        class="resource-link">nhk.or.jp/news/easy →</a>
+                </div>
+                <div class="resource-card">
+                    <div class="resource-icon">📝</div>
+                    <h4>Bunpro</h4>
+                    <p>Grammar-focused spaced repetition. Drill all 80 N5 grammar points systematically.</p>
+                    <a href="https://bunpro.jp/" target="_blank" class="resource-link">bunpro.jp →</a>
+                </div>
+                <div class="resource-card">
+                    <div class="resource-icon">🀄</div>
+                    <h4>WaniKani</h4>
+                    <p>Mnemonic-based kanji learning system. Excellent for building long-term kanji memory.</p>
+                    <a href="https://www.wanikani.com/" target="_blank" class="resource-link">wanikani.com →</a>
+                </div>
+                <div class="resource-card">
+                    <div class="resource-icon">📺</div>
+                    <h4>Nihongo con Teppei</h4>
+                    <p>Free podcast for beginners. Short episodes perfect for passive immersion and comprehension.
+                    </p>
+                    <a href="https://nihongoconteppei.com/" target="_blank" class="resource-link">nihongoconteppei.com
+                        →</a>
+                </div>
+                <div class="resource-card">
+                    <div class="resource-icon">🎯</div>
+                    <h4>JLPT Sensei</h4>
+                    <p>Free N5 study materials, grammar lists, vocabulary lists, and practice tests.</p>
+                    <a href="https://jlptsensei.com/jlpt-n5-study-guide/" target="_blank"
+                        class="resource-link">jlptsensei.com →</a>
+                </div>
+                <div class="resource-card">
+                    <div class="resource-icon">📖</div>
+                    <h4>Tae Kim's Grammar Guide</h4>
+                    <p>Free comprehensive grammar guide. Covers all N5 grammar with clear explanations.</p>
+                    <a href="https://guidetojapanese.org/learn/" target="_blank"
+                        class="resource-link">guidetojapanese.org →</a>
+                </div>
+            </div>
+
+            <!-- Study Tips -->
+            <div class="tips-section">
+                <h3>💡 Study Strategy Tips</h3>
+                <div class="tips-grid">
+                    <div class="tip-card">
+                        <h4>🌅 Two-Slot System</h4>
+                        <p>Study new material in the <strong>morning</strong> when cognitive clarity is highest. Use
+                            <strong>evening</strong> for spaced repetition review before sleep.
+                        </p>
+                    </div>
+                    <div class="tip-card">
+                        <h4>🔁 Spaced Repetition</h4>
+                        <p>Review words just as you're about to forget them. Use Anki to automate this — it
+                            optimizes
+                            your time by focusing on tricky words.</p>
+                    </div>
+                    <div class="tip-card">
+                        <h4>🗣️ Shadowing</h4>
+                        <p>Repeat Japanese audio immediately after hearing it. This builds phonetic reflexes needed
+                            for
+                            the listening section.</p>
+                    </div>
+                    <div class="tip-card">
+                        <h4>🎧 Passive Immersion</h4>
+                        <p>Listen to Japanese podcasts/music even while doing other tasks. Helps your brain
+                            recognize
+                            speech patterns over time.</p>
+                    </div>
+                    <div class="tip-card">
+                        <h4>😴 Sleep & Rest</h4>
+                        <p>The brain consolidates language during REM sleep. Maintain a regular sleep schedule —
+                            it's a
+                            <em>linguistic necessity</em>.
+                        </p>
+                    </div>
+                    <div class="tip-card">
+                        <h4>📚 Limit Resources</h4>
+                        <p>Stick to 2-3 core materials. Avoid "resource paralysis" — 3 hours focused beats 6 hours
+                            distracted.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Survival Phrases -->
+            <div class="survival-section">
+                <h3>🏠 Homestay Survival Japanese</h3>
+                <div class="survival-grid">
+                    <div class="survival-card">
+                        <div class="survival-jp">ただいま</div>
+                        <div class="survival-en">I'm home (returning)</div>
+                        <div class="survival-context">Say this when returning to the host family</div>
+                    </div>
+                    <div class="survival-card">
+                        <div class="survival-jp">おかえりなさい</div>
+                        <div class="survival-en">Welcome home</div>
+                        <div class="survival-context">What the host family will say back</div>
+                    </div>
+                    <div class="survival-card">
+                        <div class="survival-jp">いただきます</div>
+                        <div class="survival-en">I humbly receive</div>
+                        <div class="survival-context">Say before eating — shows gratitude</div>
+                    </div>
+                    <div class="survival-card">
+                        <div class="survival-jp">ごちそうさまでした</div>
+                        <div class="survival-en">Thank you for the meal</div>
+                        <div class="survival-context">Say after finishing eating</div>
+                    </div>
+                    <div class="survival-card">
+                        <div class="survival-jp">〜てもいいですか</div>
+                        <div class="survival-en">Is it okay if I ~?</div>
+                        <div class="survival-context">Asking permission to use facilities</div>
+                    </div>
+                    <div class="survival-card">
+                        <div class="survival-jp">ありがとうございます</div>
+                        <div class="survival-en">Thank you very much</div>
+                        <div class="survival-context">General politeness — use frequently!</div>
+                    </div>
+                    <div class="survival-card">
+                        <div class="survival-jp">すみません</div>
+                        <div class="survival-en">Excuse me / I'm sorry</div>
+                        <div class="survival-context">For getting attention or light apology</div>
+                    </div>
+                    <div class="survival-card">
+                        <div class="survival-jp">おやすみなさい</div>
+                        <div class="survival-en">Good night</div>
+                        <div class="survival-context">Say before going to bed</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- CONJUGATION VIEW -->
+        <section id="view-conjugation" class="view">
+            <div class="view-header">
+                <div>
+                    <h2>Verb Conjugation Drills</h2>
+                    <p class="subtitle">Master ます, て, ない forms</p>
+                </div>
+            </div>
+            <div class="practice-container">
+                <div class="drill-selection">
+                    <button class="drill-type-btn active" data-type="masu">Masu Form</button>
+                    <button class="drill-type-btn" data-type="te">Te Form</button>
+                    <button class="drill-type-btn" data-type="nai">Nai Form</button>
+                    <button class="drill-type-btn" data-type="ta">Ta Form</button>
+                </div>
+                <div id="drillArea" class="drill-card">
+                    <div class="drill-word-jp" id="drillVerb">食べる</div>
+                    <div class="drill-word-en" id="drillMeaning">to eat</div>
+                    <div class="drill-input-group">
+                        <input type="text" id="drillInput" placeholder="Type answer in hiragana/romaji..."
+                            autocomplete="off">
+                        <button id="checkDrillBtn" class="btn-primary">Check</button>
+                    </div>
+                    <div id="drillFeedback" class="drill-feedback"></div>
+                </div>
+            </div>
+        </section>
+
+
+
+        <!-- Exam View -->
+        <section id="view-exam" class="view">
+            <div class="view-header">
+                <h2>N5 Mock Exam</h2>
+                <p>Timed 15-minute exam covering all N5 domains. Final review readiness.</p>
+            </div>
+            <div id="examIntro" class="stat-card" style="max-width: 500px; margin: 40px auto; text-align: center;">
+                <div style="font-size: 3rem; margin-bottom: 20px;">⏱️</div>
+                <h3>Ready for the test?</h3>
+                <p style="margin-bottom: 20px;">60 Questions | 15 Minutes | No Hints</p>
+                <button id="startExamBtn" class="btn-primary"
+                    style="padding: 15px 40px; font-size: 1.1rem; width: 100%;">Start Exam Now</button>
+            </div>
+            <div id="examSession" class="hidden">
+                <div class="stat-card"
+                    style="background: var(--blue-glow); border-color: var(--blue); padding: 15px 25px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center;">
+                    <div id="examTimer" style="font-size: 1.5rem; font-weight: 800; color: var(--blue);">15:00</div>
+                    <div id="examProgress" style="font-weight: 700;">Question 1 / 60</div>
+                </div>
+                <div id="examArea"></div>
+            </div>
+        </section>
+
+        <!-- KANJI MODAL (STROKE ORDER & HANDWRITING) -->
+        <div id="kanjiModal" class="modal">
+            <div class="modal-content">
+                <span class="close-modal">&times;</span>
+                <div class="kanji-modal-layout">
+                    <!-- Top section: Basic Info & Radicals -->
+                    <div class="kanji-info-panel">
+                        <span id="modalKanjiChar"></span>
+                        <span id="modalKanjiReading"></span>
+                        <span id="modalKanjiMeaning"></span>
+                    </div>
+                    <div class="radical-breakdown" id="radicalBreakdown"
+                        style="padding:12px; background:var(--bg-primary); border-radius:10px; border:1px solid var(--border)">
+                        <!-- Radicals go here -->
+                    </div>
+
+                    <!-- Middle section: Canvas & Stroke Order vertically aligned -->
+                    <div style="display: flex; flex-direction: column; align-items: center; gap: 20px;">
+                        <div style="width: 100%; max-width: 400px; text-align: center;">
+                            <h4>Stroke Order</h4>
+                            <div id="strokeOrderContainer" class="stroke-container" style="margin: 10px auto;">
+                                <!-- SVG will be injected here -->
+                            </div>
+                            <div class="stroke-controls">
+                                <button id="playStroke" class="btn-primary">▶ Play</button>
+                                <button id="stepStroke" class="btn-outline">Step Forward</button>
+                            </div>
+                        </div>
+
+                        <div id="handwritingCanvasContainer" class="canvas-container" style="width: 100%; max-width: 400px; margin: 0 auto;">
+                            <canvas id="handwritingCanvas"></canvas>
+                            <div class="canvas-controls">
+                                <button id="undoCanvas" class="btn-text">Undo</button>
+                                <button id="clearCanvas" class="btn-text">Clear</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Bottom section: Mnemonic / Story -->
+                    <div class="mnemonic-section" style="width: 100%;">
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px">
+                            <label style="font-size:0.8rem; font-weight:700">PERSONAL MNEMONIC / STORY</label>
+
+                        </div>
+                        <textarea id="mnemonicNote" placeholder="Write a memory aid..."
+                            style="width:100%; height:80px; background:var(--bg-primary); border:1px solid var(--border); border-radius:10px; color:var(--text-primary); padding:10px; font-size:0.9rem; resize:none"></textarea>
+                        <button id="saveMnemonicBtn" class="btn-primary"
+                            style="margin-top:10px; padding:8px 15px; font-size:0.8rem">Save Note</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- OMNISEARCH MODAL -->
+    <div id="searchModal" class="modal">
+        <div class="modal-content search-modal-content">
+            <input type="text" id="searchInput" placeholder="Search anything (Kanji, Vocab, Grammar, Eng)..."
+                autocomplete="off">
+            <div id="searchResults" class="search-results"></div>
+            <div class="search-hint">💡 Use <kbd>Ctrl</kbd>+<kbd>K</kbd> to open anytime. Use arrow keys to navigate.
+            </div>
+        </div>
+    </div>
+
+    <!-- CUSTOM CARD MODAL -->
+    <div id="customCardModal" class="modal">
+        <div class="modal-content" style="max-width: 500px">
+            <span class="close-modal">&times;</span>
+            <h2>Add Custom Flashcard</h2>
+            <div class="input-group" style="margin-top:20px">
+                <label>Japanese (Front)</label>
+                <input type="text" id="customJp" placeholder="e.g. 勉強する">
+            </div>
+            <div class="input-group" style="margin-top:15px">
+                <label>Reading / Furigana</label>
+                <input type="text" id="customR" placeholder="e.g. べんきょうする">
+            </div>
+            <div class="input-group" style="margin-top:15px">
+                <label>Meaning (Back)</label>
+                <input type="text" id="customEn" placeholder="e.g. to study">
+            </div>
+            <button id="saveCustomCard" class="btn-primary" style="width:100%; margin-top:20px">📦 Add to SRS
+                Deck</button>
+        </div>
+    </div>
+
+    <!-- Mobile Search Floating Button -->
+    <button id="mobileSearchBtn" class="mobile-search-fab">🔍</button>
+
+    <script src="vocab1.js"></script>
+    <script src="vocab2.js"></script>
+    <script src="vocab3.js"></script>
+    <script src="vocab4.js"></script>
+    <script src="grammar_full.js"></script>
+    <script src="kanji_particles.js"></script>
+    <script src="data.js"></script>
+    <script src="lessons.js"></script>
+    <script src="drills_data.js"></script>
+
+    <!-- Wave 1 Features -->
+    <script src="srs.js"></script>
+    <script src="stroke.js"></script>
+    <script src="handwriting.js"></script>
+
+    <!-- Wave 2+3: All drill logic is in drills.js -->
+
+    <script src="drills.js"></script>
+    <script src="sw.js"></script>
+    <script src="mnemonics.js"></script>
+    <script src="search.js"></script>
+
+    <script src="app.js"></script>
+</body>
+
+</html>
